@@ -153,6 +153,27 @@ impl MouseButton {
 }
 
 impl MouseCursor {
+    pub fn pos() -> (i32, i32) {
+        let mut abs_x = 0;
+        let mut abs_y = 0;
+
+        SEND_DISPLAY.with(|display| unsafe {
+            XQueryPointer(
+                display,
+                XRootWindow(display, XDefaultScreen(display)),
+                &mut 0,
+                &mut 0,
+                &mut abs_x,
+                &mut abs_y,
+                &mut 0,
+                &mut 0,
+                &mut 0,
+            )
+        });
+
+        (abs_x, abs_y)
+    }
+
     /// Moves the mouse relative to its current position by a given amount of pixels.
     pub fn move_rel(x: i32, y: i32) {
         let mut device = FAKE_DEVICE.lock().unwrap();
